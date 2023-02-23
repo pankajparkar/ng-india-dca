@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostBinding, inject } from '@angular/core';
+import { Directive, HostBinding } from '@angular/core';
 
 @Directive({
   selector: '[appBlink]',
