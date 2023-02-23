@@ -1,11 +1,9 @@
-import { Directive } from '@angular/core';
+import { Directive, ElementRef, HostBinding, inject } from '@angular/core';
 
 @Directive({
   selector: '[appBold]',
   standalone: true
 })
 export class BoldDirective {
-
-  constructor() { }
-
+  @HostBinding('style.font-weight') bold = 'bolder';
 }

@@ -1,11 +1,10 @@
-import { Directive } from '@angular/core';
+import { Directive, ElementRef, HostBinding, inject } from '@angular/core';
 
 @Directive({
   selector: '[appBlink]',
-  standalone: true
+  standalone: true,
 })
 export class BlinkDirective {
-
-  constructor() { }
-
+  @HostBinding('style.animation')
+  animation = 'blinker 1s step-start infinite';
 }
