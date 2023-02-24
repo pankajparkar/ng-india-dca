@@ -1,4 +1,4 @@
-import { Directive, QueryList, ViewChildren } from '@angular/core';
+import { ContentChild, Directive, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
 
@@ -10,7 +10,7 @@ export class InvalidFieldFocusDirective {
 
   #destoryed = new Subject<void>();
 
-  @ViewChildren('form') forms: QueryList<NgForm> | undefined;
+  @ContentChild('form') forms: any;
 
   watchInvalidField() {
     console.log(this.forms);
