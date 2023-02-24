@@ -15,7 +15,32 @@ import { BoldDirective } from '../directives/bold.directive';
     },
     BoldDirective,
   ],
-  templateUrl: './simple-card.component.html',
-  styleUrls: ['./simple-card.component.scss']
+  template: `
+    <div class="card">
+      <div class="header">
+          <p>The Header</p>
+      </div>
+      <div class="container">
+          <p>Some random texts</p>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .card {
+      width: 30%;
+      display: flex;
+      flex-direction: column;
+      border: 1px red solid;
+    }
+    .header {
+      height: 30%;
+      background: red;
+      color: white;
+      text-align: center;
+    }
+    .container {
+      padding: 2px 16px;
+    }
+  `]
 })
 export class SimpleCardComponent { }
