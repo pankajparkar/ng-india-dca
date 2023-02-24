@@ -7,11 +7,10 @@ import { InvalidFieldFocusDirective } from '../directives/invalid-field-focus.di
   standalone: true,
   imports: [
     FormsModule,
-    InvalidFieldFocusDirective,
   ],
-  hostDirectives: [],
+  hostDirectives: [InvalidFieldFocusDirective],
   template: `
-    <form name="userForm" #myForm="ngForm" (ngSubmit)="submit()" appInvalidFieldFocus>
+    <form name="userForm" ngForm #myForm="ngForm" (ngSubmit)="submit()">
       <div class="form-control">
         <label>First Name:</label>
         <input type="text" name="firstName" [(ngModel)]="user.firstName" required>
