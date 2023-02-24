@@ -13,5 +13,12 @@ import { CdkMenuItem, CdkMenuModule } from '@angular/cdk/menu';
   template: `
     <ng-content></ng-content>
   `,
+  styles: [`
+    :host {
+      display: flex;
+      padding: 5px;
+      border: 0.5px solid gray;
+    }
+  `]
 })
 export class MenuItemComponent { }
