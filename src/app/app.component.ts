@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { BlinkDirective } from './directives/blink.directive';
 import { BoldDirective } from './directives/bold.directive';
 import { SimpleCardComponent } from './simple-card/simple-card.component';
@@ -6,14 +7,15 @@ import { SimpleCardComponent } from './simple-card/simple-card.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  template: `
+    <router-outlet></router-outlet>
+  `,
   imports: [
     SimpleCardComponent,
+    RouterOutlet,
     BlinkDirective,
     BoldDirective,
   ]
 })
 export class AppComponent {
-  title = 'ng-india-dca';
 }
