@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { SimpleCardComponent } from 'src/app/simple-card/simple-card.component';
 
 @Component({
