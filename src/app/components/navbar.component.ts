@@ -1,16 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [RouterLink, RouterLinkActive],
   template: `
     <div class="topnav" id="myTopnav">
-      <a href="#home" class="active">Home</a>
-      <a href="#news">News</a>
-      <a href="#contact">Contact</a>
-      <a href="#about">About</a>
+      Demo App
+      <a routerLink="/regular" routerLinkActive="active">Regular</a>
+      <a routerLink="/composition" routerLinkActive="active">Composition</a>
+      <a routerLink="/custom-menu" routerLinkActive="active">Custom Menu</a>
+      <a routerLink="/testing" routerLinkActive="active">Testing</a>
       <a href="javascript:void(0);" class="icon" onclick="myFunction()">
         <i class="fa fa-bars"></i>
       </a>
