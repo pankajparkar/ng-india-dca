@@ -60,7 +60,7 @@ export class SimpleCardComponent {
   router = inject(Router);
   isRegular = this.router.url === '/regular'
   isComposition = this.router.url === '/composition'
-  bannerClick(event: MouseEvent) {
+  bannerClick(event: any) {
     console.log(event);
   }
 }
