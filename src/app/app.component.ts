@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { BlinkDirective } from './directives/blink.directive';
 import { BoldDirective } from './directives/bold.directive';
-import { SimpleCardComponent } from './simple-card/simple-card.component';
+import { SimpleCardComponent } from './components/simple-card.component';
 import { NavbarComponent } from "./components/navbar.component";
 
 @Component({

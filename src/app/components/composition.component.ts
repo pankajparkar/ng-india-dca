@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SimpleCardComponent } from 'src/app/simple-card/simple-card.component';
+import { SimpleCardComponent } from 'src/app/components/simple-card.component';
 
 @Component({
   selector: 'app-composition',

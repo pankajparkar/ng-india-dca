@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TestingIdDirective } from '../directives/testing-id.directive';
-import { SimpleCardComponent } from '../simple-card/simple-card.component';
+import { SimpleCardComponent } from './simple-card.component';
 
 @Component({
   selector: 'app-testing',

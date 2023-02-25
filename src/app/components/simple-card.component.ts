@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RibbonComponent } from "../components/ribbon/ribbon.component";
+import { RibbonComponent } from "./ribbon/ribbon.component";
 import { BoldDirective } from '../directives/bold.directive';
 import { BlinkDirective } from '../directives/blink.directive';
 import { NgIf } from '@angular/common';
