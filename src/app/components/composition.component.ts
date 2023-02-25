@@ -8,14 +8,9 @@ import { SimpleCardComponent } from 'src/app/simple-card/simple-card.component';
     SimpleCardComponent
   ],
   template: `
-    <app-simple-card
-      bannerTheme="'black'"
-      (bannerClick)="bannerClick($event)">
-    </app-simple-card>
+    <app-simple-card></app-simple-card>
   `,
 })
 export class CompositionComponent {
-  bannerClick(event: MouseEvent) {
-    console.log(event);
-  }
+
 }
