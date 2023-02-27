@@ -1,0 +1,55 @@
+<div class="multiselect-wrapper">
+  <button class="dropdown-button" (click)="toggleDropdown()" [ngClass]="{ open: isOpen }">
+    <div class="selection" [ngStyle]="borderBottom()">
+      <!-- TODO: None selected template should be ng-template -->
+      <span class="none-selected" *ngIf="!isValueSelected()">None selected</span>
+      <span class="selected" *ngIf="isValueSelected()">
+        <span class="text">{{_selectedOptions | displaySelectedValue: showMaxLabels}}</span>
+      </span>
+      <div class="symbols">
+        <span class="close" (click)="clear($event)" *ngIf="isValueSelected() && !multiple">×</span>
+        <span class="caret"></span>
+      </div>
+    </div>
+  </button>
+  <div class="listing-wrapper" *ngIf="isOpen">
+    <ms-helper-elements
+      *ngIf="showHelperElements"
+      [multiple]="multiple"
+      [disabled]="disabled"
+      (onClear)="onClear.emit()"
+      (resetClicked)="reset()"
+      (onSearchChange)="onSearchChange.emit($event)"
+      (selectNoneClicked)="selectNone()"
+      (selectAllClicked)="selectAll()"
+      (selectNoneClicked)="selectNone()"
+    >
+    </ms-helper-elements>
+    <ms-filter-options
+      *ngIf="showSearchFilter"
+      #filterOptions
+      (onSearchChange)="searchChange($event)"
+    ></ms-filter-options>
+    <ng-container *ngIf="!groupedProperty; else groupedTemplate">
+      <ms-options
+        [optionsTemplate]="optionsTemplate"
+        [options]="_options"
+        [disabled]="disabled"
+        (selectOption)="select($event)"
+      ></ms-options>
+    </ng-container>
+  </div>
+</div>
+<ng-template #groupedTemplate>
+  <ms-grouped-options
+    [multiple]="multiple"
+    [optionsTemplate]="optionsTemplate"
+    [selectedOptions]="_selectedOptions"
+    [options]="_options"
+    [disabled]="disabled"
+    [groupedProperty]="groupedProperty"
+    (selectOption)="select($event)"
+    (selectGroup)="selectGroup($event)"
+  >
+  </ms-grouped-options>
+</ng-template>

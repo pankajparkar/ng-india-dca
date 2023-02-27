@@ -1,0 +1,52 @@
+.helper-button {
+  font-weight: 400;
+  font-size: .75rem;
+  max-height: 30px;
+  white-space: nowrap;
+  height: 30px;
+  border-radius: .25rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: 1px solid rgba(0,0,0,.12);
+}
+
+fieldset {
+  padding: 0;
+  border: none;
+}
+
+.helper-buttons {
+  border-bottom: 1px solid #ddd;
+  padding: 2px;
+}
+
+/* Material CSS start */
+
+.mat-multiselect :host .helper-button {
+  background-color: transparent;
+  color: #444;
+}
+
+.mat-multiselect :host .helper-button:not(:last-child) {
+  margin: 0 2px;
+}
+
+/* Material CSS end */
+
+/* Boostrap CSS start */
+
+.bs-multiselect :host .helper-button {
+  box-sizing: border-box;
+  cursor: pointer;
+  outline: 0;
+  padding: .25em;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bs-multiselect .helper-button:not(:last-child) {
+  margin-right: 4px;
+}
+
+/* Boostrap CSS end */

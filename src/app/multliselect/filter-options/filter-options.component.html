@@ -1,0 +1,15 @@
+<div class="input-search">
+  <div class="field-infix">
+    <input
+      autofocus
+      placeholder="Search options here.."
+      type="text"
+      [formControl]="filterName"
+      ngDefaultControl
+      class="input-filter"
+    />
+  </div>
+  <div class="field-suffix">
+    <button type="button" [disabled]="!filterName.value" (click)="clearInputFilter()" class="clear-button">X</button>
+  </div>
+</div>
