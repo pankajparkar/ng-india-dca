@@ -21,32 +21,32 @@ export class OptionsComponent implements OnInit, OnChanges {
   _options: any[] = [];
 
   @Input() disabled: boolean = false;
-  @Input() set options(value) {
+  @Input() set options(value: any) {
     this._options = value;
   }
   get() {
     return this._options;
   }
-  @Input() optionsTemplate: TemplateRef<any>;
+  @Input() optionsTemplate!: TemplateRef<any>;
   @Output() selectOption = new EventEmitter<any>();
 
   start: number = 0;
   end: number = 5;
-  filteredOptions;
+  filteredOptions!: any[];
 
-  @ViewChild('defaultOptionsTemplate', { static: true }) defaultOptionsTemplate: TemplateRef<any>;
+  @ViewChild('defaultOptionsTemplate', { static: true }) defaultOptionsTemplate!: TemplateRef<any>;
 
-  constructor() {}
+  constructor() { }
 
   getOptionStyle(option: any) {
     return { marked: option.ticked, disabled: this.disabled || option.disabled };
   }
 
-  select(option) {
+  select(option: any) {
     this.selectOption.emit(option);
   }
 
-  updateRange({ start, end }) {
+  updateRange({ start, end }: any) {
     this.filteredOptions = [...this._options].slice(start, end);
   }
 
