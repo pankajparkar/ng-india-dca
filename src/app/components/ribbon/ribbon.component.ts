@@ -2,19 +2,20 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BlinkDirective } from 'src/app/directives/blink.directive';
 import { BoldDirective } from 'src/app/directives/bold.directive';
+import { WithBoldAndBlink } from 'src/app/directives/custom-behavior.directive';
 
 @Component({
   selector: 'app-ribbon',
   standalone: true,
   imports: [CommonModule],
-  hostDirectives: [
-    {
-      directive: BlinkDirective,
-      inputs: ['theme: bannerTheme'],
-      outputs: ['elementClick: bannerClick'],
-    },
-    BoldDirective,
-  ],
+  // hostDirectives: [
+  //   {
+  //     directive: BlinkDirective,
+  //     inputs: ['theme: bannerTheme'],
+  //     outputs: ['elementClick: bannerClick'],
+  //   },
+  //   BoldDirective,
+  // ],
   template: `
     <div class="ribbon"
       [ngClass]="placement ?? 'ribbon-top-left'">

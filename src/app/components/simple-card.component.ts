@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
   template: `
     <div class="card">
       <ng-container *ngIf="isRegular">
-        <app-ribbon appBold appBlink/>
+        <app-ribbon/>
+        <!-- <app-ribbon appBold appBlink/> -->
       </ng-container>
       <ng-container *ngIf="isComposition">
         <app-ribbon
