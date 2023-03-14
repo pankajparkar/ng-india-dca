@@ -17,7 +17,7 @@ import { NgxMultiselectService } from './services/multiselect.service';
 import { forwardRef } from '@angular/core';
 import { FilterOptionsComponent } from './filter-options/filter-options.component';
 
-export const DEFAULT_VALUE_ACCESSOR: any = {
+export const DEFAULT_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => NgxMultiselectComponent),
   multi: true
@@ -39,19 +39,19 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   // private variables
   private _multiple!: boolean;
   private _theme: string = 'material';
-  private _optionsCopy!: any;
+  private _optionsCopy!: Record<string, unknown>;
   private _isOpen: boolean = false;
-  private operationPendingQueue: any[] = [];
+  private operationPendingQueue: Record<string, unknown>[] = [];
 
   // public variables
-  _selectedOptions: any | any[] = null;
-  _defaultPropertyMap: any = {
+  _selectedOptions: Record<string, unknown> | Record<string, unknown>[] | null = null;
+  _defaultPropertyMap: Record<string, unknown> = {
     id: 'id',
     name: 'name',
     disabled: 'disabled'
   };
   _defaultPropertyMapLength = Object.keys(this._defaultPropertyMap).length;
-  _options: any;
+  _options!: Record<string, unknown>;
 
   @HostBinding('class.mat-multiselect') matMultiselect: boolean = true;
   @HostBinding('class.bs-multiselect') bsMultiselect: boolean = false;
@@ -97,7 +97,7 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   get isOpen() {
     return this._isOpen;
   }
-  @Input() set propertyMap(val: any) {
+  @Input() set propertyMap(val: Record<string, unknown>) {
     this._defaultPropertyMap = { ...this._defaultPropertyMap, ...val };
   }
   @Input()
@@ -110,7 +110,7 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   }
 
   @Input()
-  set options(collection: any) {
+  set options(collection: Record<string, unknown>) {
     if (!collection) return;
     this._optionsCopy = this.multiselectService.mapDatasourceToFields(
       collection,
@@ -125,20 +125,20 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   }
 
   // Output bindings
-  @Output() onOpen: EventEmitter<any> = new EventEmitter<void>();
-  @Output() onClose: EventEmitter<any> = new EventEmitter<void>();
-  @Output() onItemClick: EventEmitter<any> = new EventEmitter<any>();
-  @Output() onGroupItemClick: EventEmitter<any> = new EventEmitter<any>();
-  @Output() onSelectAll: EventEmitter<any> = new EventEmitter<void>();
-  @Output() onSelectNone: EventEmitter<any> = new EventEmitter<void>();
-  @Output() onReset: EventEmitter<any> = new EventEmitter<void>();
-  @Output() onClear: EventEmitter<any> = new EventEmitter<void>();
-  @Output() onSearchChange: EventEmitter<any> = new EventEmitter<string>();
+  @Output() onOpen: EventEmitter<Record<string, unknown>> = new EventEmitter<void>();
+  @Output() onClose: EventEmitter<Record<string, unknown>> = new EventEmitter<void>();
+  @Output() onItemClick: EventEmitter<Record<string, unknown>> = new EventEmitter<Record<string, unknown>>();
+  @Output() onGroupItemClick: EventEmitter<Record<string, unknown>> = new EventEmitter<Record<string, unknown>>();
+  @Output() onSelectAll: EventEmitter<Record<string, unknown>> = new EventEmitter<void>();
+  @Output() onSelectNone: EventEmitter<Record<string, unknown>> = new EventEmitter<void>();
+  @Output() onReset: EventEmitter<Record<string, unknown>> = new EventEmitter<void>();
+  @Output() onClear: EventEmitter<Record<string, unknown>> = new EventEmitter<void>();
+  @Output() onSearchChange: EventEmitter<Record<string, unknown>> = new EventEmitter<string>();
 
   @ViewChild('filterOptions', { read: FilterOptionsComponent }) filterOptions!: FilterOptionsComponent;
 
   // Adding pending operation in queue
-  addOperation(item: any) {
+  addOperation(item: Record<string, unknown>) {
     this.operationPendingQueue.push(item);
   }
 
@@ -163,18 +163,18 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
     return this.operationPendingQueue.length;
   }
 
-  private _initialValue: any;
-  set initialValue(value: any) {
+  private _initialValue: Record<string, unknown>;
+  set initialValue(value: Record<string, unknown>) {
     this._initialValue = value;
   }
   get initialValue() {
     return this._initialValue;
   }
 
-  onChange = (_: any) => { };
+  onChange = (_: Record<string, unknown>) => { };
   onTouched = () => { };
 
-  writeValue(value: any) {
+  writeValue(value: Record<string, unknown>) {
     // Set selected value for initial load of value
     if (value) {
       this.initialValue = value;
@@ -182,33 +182,33 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
       this.formatPrepopulatedValues(value);
     }
   }
-  private formatPrepopulatedValues(value: any): any {
+  private formatPrepopulatedValues(value: Record<string, unknown>): Record<string, unknown> {
     let options = value;
     // TODO: can we improve below logic?
     if (Object.keys(this._defaultPropertyMap).length == this._defaultPropertyMapLength) return;
-    const swappedPropertyMap: any = this.multiselectService.mirrorObject(this._defaultPropertyMap);
+    const swappedPropertyMap: Record<string, unknown> = this.multiselectService.mirrorObject(this._defaultPropertyMap);
     if (this.multiple) {
-      options.forEach((o: any) => {
-        o.id = o[swappedPropertyMap.id];
-        o.name = o[swappedPropertyMap.name];
+      options.forEach((o: Record<string, unknown>) => {
+        o['id'] = o[swappedPropertyMap['id'] as string];
+        o['name'] = o[swappedPropertyMap['name'] as string];
       });
     } else {
-      value.id = value[swappedPropertyMap.id];
-      value.name = value[swappedPropertyMap.name];
+      value['id'] = value[swappedPropertyMap['id'] as string];
+      value['name'] = value[swappedPropertyMap['name'] as string];
       options = value;
     }
   }
 
-  registerOnChange(fn: (value: any) => any): void {
+  registerOnChange(fn: (value: Record<string, unknown>) => Record<string, unknown>): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: () => any): void {
+  registerOnTouched(fn: () => Record<string, unknown>): void {
     this.onTouched = fn;
   }
 
   // All update to options should happen from below method.
-  setOptions(options: any) {
+  setOptions(options: Record<string, unknown>) {
     this._options = options;
   }
 
@@ -245,9 +245,9 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
     this.isOpen = false;
   }
 
-  removeItem(collection: any, item: any) {
-    item.ticked = false;
-    const index = collection.findIndex((o: any) => o.id === item.id);
+  removeItem(collection: Record<string, unknown>[], item: Record<string, unknown>) {
+    item['ticked'] = false;
+    const index = collection.findIndex((o: Record<string, unknown>) => o['id'] === item['id']);
     collection.splice(index, 1);
   }
 
@@ -255,11 +255,11 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
     this.isOpen = !this.isOpen;
   }
 
-  prepopulateOptions(selected: any) {
-    let selectedIds: any[] = [];
+  prepopulateOptions(selected: Record<string, unknown>) {
+    let selectedIds: Record<string, unknown>[] = [];
     selectedIds = this._multiple ?
-      (selected || []).map((i: any) => i.id) :
-      selected ? [selected.id] : [];
+      (selected || []).map((i: Record<string, unknown>) => i['id']) :
+      selected ? [selected['id']] : [];
     this.setOptions(
       this.getOptions()
         .map(o => ({
@@ -272,7 +272,7 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
     this.viewToModel(selected);
   }
 
-  select(option: any) {
+  select(option: Record<string, unknown>) {
     let selectedOptions;
     option.ticked = !option.ticked;
     // TODO: Refactor below logic
@@ -333,12 +333,12 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   }
 
   //TODO: Optimized below logic, it can be done in lesser steps
-  selectGroup(group: any) {
+  selectGroup(group: Record<string, unknown>) {
     const { ticked, values } = group;
     const options = this.getOptions();
     let selectedValues = [...this._selectedOptions];
     let selectedIds = selectedValues.map(s => s.id);
-    const allGroupOptionIds = values.map((v: any) => v.id);
+    const allGroupOptionIds = values.map((v: Record<string, unknown>) => v.id);
     // Get all ticked options
     // concat with selected options
     selectedValues = ticked
@@ -359,14 +359,14 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   }
 
   // Responsible for updating value from view to model
-  viewToModel(selected: any) {
+  viewToModel(selected: Record<string, unknown> | null) {
     if (this._selectedOptions !== selected) {
       this._selectedOptions = selected;
       this.onChange(selected);
     }
   }
 
-  clear(event: any) {
+  clear(event: Record<string, unknown>) {
     let changedOptions = this.getOptions().map(o => ({ ...o, ticked: false }));
     this.setOptions(changedOptions);
     // no value is selected so passing null
@@ -390,7 +390,7 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   // TODO: Consider creating a directive for this.
   // TODO: Also convert below to be work for element specific
   @HostListener('document:click', ['$event.target'])
-  clickOutSide(event: any) {
+  clickOutSide(event: Record<string, unknown>) {
     if (
       this.isOpen &&
       this.elementRef.nativeElement !== event &&

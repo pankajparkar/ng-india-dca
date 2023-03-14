@@ -14,7 +14,7 @@ const matchSelectors = [
 export class NgxMultiselectService {
   constructor() { }
 
-  pseudoClassExist(node: any, selector: any) {
+  pseudoClassExist(node: Record<string, unknown>, selector: Record<string, unknown>) {
     const nativeMatches = node.matches || node.msMatchesSelector;
     try {
       return nativeMatches.call(node, selector);
@@ -23,11 +23,11 @@ export class NgxMultiselectService {
     }
   }
 
-  closest(el: any, selector: any): boolean {
-    let matchesFn: any;
+  closest(el: Record<string, unknown>, selector: Record<string, unknown>): boolean {
+    let matchesFn: Record<string, unknown>;
     // find vendor prefix
     matchSelectors.some(function (fn) {
-      if (typeof (document as any).body[fn] === 'function') {
+      if (typeof (document as Record<string, unknown>).body[fn] === 'function') {
         matchesFn = fn;
         return true;
       }
@@ -49,24 +49,24 @@ export class NgxMultiselectService {
   }
 
   // TODO: make this logic to work to find all descendant groups
-  collectAllDescendants(collection: any[], groupProperty: any, groupName: any) {
+  collectAllDescendants(collection: Record<string, unknown>[], groupProperty: Record<string, unknown>, groupName: Record<string, unknown>) {
     const allDescendants = collection.filter((item: string) => item[groupProperty] == groupName);
-    allDescendants.concat(collection.filter((item: string) => (item as any).parent == groupName));
+    allDescendants.concat(collection.filter((item: string) => (item as Record<string, unknown>).parent == groupName));
     return allDescendants;
   }
 
-  private allDescendantsAreTicked(collection: any[], groupProperty: any, groupName: any) {
+  private allDescendantsAreTicked(collection: Record<string, unknown>[], groupProperty: Record<string, unknown>, groupName: Record<string, unknown>) {
     const allDescendants = this.collectAllDescendants(collection, groupProperty, groupName);
     const allAreTicked = allDescendants.every(d => d.ticked);
     return allAreTicked;
   }
-  private allDescendantsAreDisabled(collection: any[], groupProperty: any, groupName: any) {
+  private allDescendantsAreDisabled(collection: Record<string, unknown>[], groupProperty: Record<string, unknown>, groupName: Record<string, unknown>) {
     const allDescendants = this.collectAllDescendants(collection, groupProperty, groupName);
     const allAreDisabled = allDescendants.every(d => d.disabled);
     return allAreDisabled;
   }
 
-  optionsGrouping(options: any[], groupByProperty: string): any[] {
+  optionsGrouping(options: Record<string, unknown>[], groupByProperty: string): Record<string, unknown>[] {
     const getAllUniqueGroupByPropertyValue = this.findUnique(options.map(item => item[groupByProperty]));
     const result = getAllUniqueGroupByPropertyValue.map(group => {
       const groupedValues = options.filter(o => o[groupByProperty] === group);
@@ -80,19 +80,19 @@ export class NgxMultiselectService {
     return result;
   }
 
-  findUnique(expression: any) {
+  findUnique(expression: Record<string, unknown>) {
     return [...Array.from(new Set(expression))];
   }
 
-  virtualOptionsGroupingFlatten(options: any[], groupByProperty: any): any[] {
+  virtualOptionsGroupingFlatten(options: Record<string, unknown>[], groupByProperty: Record<string, unknown>): Record<string, unknown>[] {
     const allParentGroupedValues = this.findUnique(
-      options.filter((o: any) => !(o as any).parent)
-        .map((item: any) => item[groupByProperty])
+      options.filter((o: Record<string, unknown>) => !(o as Record<string, unknown>).parent)
+        .map((item: Record<string, unknown>) => item[groupByProperty])
     );
     const subGroupedValues = this.findUnique(
       options.filter(o => o.parent).map(({ name, parent }) => ({ name, parent }))
     );
-    let result: any[] = [];
+    let result: Record<string, unknown>[] = [];
     allParentGroupedValues.forEach(group => {
       result.push({
         name: group,
@@ -104,7 +104,7 @@ export class NgxMultiselectService {
         .filter(o => o[groupByProperty] === group && !o.parent)
         .map(v => ({ ...v, depth: 1 }));
       result = [...result].concat(groupedValues);
-      const childGroupedValues = subGroupedValues.filter((s: any) => s.parent === group);
+      const childGroupedValues = subGroupedValues.filter((s: Record<string, unknown>) => s.parent === group);
       childGroupedValues.forEach(c => {
         result.push({ name: c, parent: group, isGroup: true });
         const values = options.filter(o => o[groupByProperty] === c).map(v => ({ ...v, depth: 2 }));
@@ -114,19 +114,19 @@ export class NgxMultiselectService {
     return result;
   }
 
-  mirrorObject(json: any) {
-    const ret: any = {};
+  mirrorObject(json: Record<string, unknown>) {
+    const ret: Record<string, unknown> = {};
     for (var key in json) {
       ret[json[key]] = key;
     }
     return ret;
   }
 
-  mapDatasourceToFields(collection: any[], propertyMap: any, groupedProperty?: string) {
+  mapDatasourceToFields(collection: Record<string, unknown>[], propertyMap: Record<string, unknown>, groupedProperty?: string) {
     let keys = Object.keys(propertyMap);
-    return collection.map((item: any) => {
+    return collection.map((item: Record<string, unknown>) => {
       let obj = groupedProperty ? { [groupedProperty]: item[groupedProperty] } : {};
-      keys.reduce((a: any, b: string) => {
+      keys.reduce((a: Record<string, unknown>, b: string) => {
         a[b] = item[propertyMap[b]];
         return a;
       }, obj);
