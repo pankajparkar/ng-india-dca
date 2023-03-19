@@ -18,17 +18,17 @@ import { NgxMultiselectService } from '../services/multiselect.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupedOptionsComponent implements OnInit, OnChanges {
-  _options: any[] = [];
-  _selectedOptions: any[] = [];
-  groupedOptions: any[] = [];
+  _options: Record<string, unknown>[] = [];
+  _selectedOptions: Record<string, unknown>[] = [];
+  groupedOptions: Record<string, unknown>[] = [];
   start: number = 0;
   end: number = 5;
-  filteredOptions!: any[];
+  filteredOptions!: Record<string, unknown>[];
 
   @Input() groupedProperty!: string;
   @Input() disabled = false;
   @Input() multiple = false;
-  @Input() set selectedOptions(value: any) {
+  @Input() set selectedOptions(value: Record<string, unknown>[]) {
     this._selectedOptions = value;
     this.formGroupOptions(this._options, this._selectedOptions);
   }
@@ -49,29 +49,29 @@ export class GroupedOptionsComponent implements OnInit, OnChanges {
   constructor(public multiselectService: NgxMultiselectService) { }
 
   // TODO: Refactor below logic
-  formGroupOptions(collection: any[], selectedOptions: any[]) {
+  formGroupOptions(collection: Record<string, unknown>[], selectedOptions: Record<string, unknown>[]) {
     let selectedIds = this.multiple ?
-      (selectedOptions || []).map(s => s.id) :
+      (selectedOptions || []).map(s => s['id']) :
       selectedOptions ? [(selectedOptions as any).id]
         : [];
     const values = collection.map(v => ({
       ...v,
-      ticked: !v.isGroup ? selectedIds.indexOf(v.id) !== -1 : v.ticked
+      ticked: !v['isGroup'] ? selectedIds.indexOf(v['id']) !== -1 : v['ticked']
     }));
     this.groupedOptions = this.multiselectService.virtualOptionsGroupingFlatten(values, this.groupedProperty);
     this.updateRange({ start: this.start, end: this.end });
   }
 
-  getOptionStyle(option: any) {
+  getOptionStyle(option: Record<string, unknown>) {
     return {
-      group: option.isGroup,
-      marked: option.ticked,
-      disabled: this.disabled || option.disabled
+      group: option['isGroup'],
+      marked: option['ticked'],
+      disabled: this.disabled || option['disabled']
     };
   }
 
-  trackByFn(_: any, option: any) {
-    return option.id;
+  trackByFn(_: Record<string, unknown>, option: Record<string, unknown>) {
+    return option['id'];
   }
 
   updateRange({ start, end }: any) {

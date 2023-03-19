@@ -8,7 +8,7 @@ const DOTS = ' ...';
 })
 export class DisplaySelectedValuePipe implements PipeTransform {
   defaultMaxLabelCount: number = 3;
-  transform(value: any, maxLabelCount: number = this.defaultMaxLabelCount): any {
+  transform(value: Record<string, unknown>[] | Record<string, unknown>, maxLabelCount: number = this.defaultMaxLabelCount): string {
     if (value instanceof Array) {
 
       const collection = [...value];
@@ -16,8 +16,8 @@ export class DisplaySelectedValuePipe implements PipeTransform {
       const condn = collection.length > maxLabelCount;
       condn ? (collection.length = maxLabelCount) : null;
 
-      return `${collection.map(v => v.name).join(', ')}${condn ? DOTS + ' ('+total+')' : ''}`;
+      return `${collection.map(v => v['name']).join(', ')}${condn ? DOTS + ' (' + total + ')' : ''}`;
     }
-    return value && value.name;
+    return value && value['name'] as string;
   }
 }

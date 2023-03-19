@@ -74,7 +74,7 @@ describe('MultiselectService', () => {
     [NgxMultiselectService],
     (service: NgxMultiselectService) => {
       // arrange
-      const obj = {id: 'Team', name: 'TeamName'};
+      const obj = { id: 'Team', name: 'TeamName' };
       const keys = Object.keys(obj);
       const values = Object.values(obj);
 
@@ -93,33 +93,33 @@ describe('MultiselectService', () => {
     it('should group by pass group property', inject(
       [NgxMultiselectService],
       (service: NgxMultiselectService) => {
-      // arrange
-      // act
-      const groupedResults = service.optionsGrouping(players, groupByProperty);
+        // arrange
+        // act
+        const groupedResults = service.optionsGrouping(players, groupByProperty);
 
-      // assert
-      expect(groupedResults.length).toBe(3);
-      expect(groupedResults[0].values.length).toBe(2);
-      expect(groupedResults[1].values.length).toBe(2);
-      expect(groupedResults[2].values.length).toBe(1);
-    }));
+        // assert
+        expect(groupedResults.length).toBe(3);
+        expect(groupedResults[0].values.length).toBe(2);
+        expect(groupedResults[1].values.length).toBe(2);
+        expect(groupedResults[2].values.length).toBe(1);
+      }));
     it('should mark group option when all descendants are seleceted', inject(
       [NgxMultiselectService],
-        (service: NgxMultiselectService) => {
+      (service: NgxMultiselectService) => {
         // arrange
-        const plyrs = JSON.parse(JSON.stringify(players))
-        plyrs.forEach(p => p.team === 'Manchester United' && (p.ticked = true));
+        const plyrs = JSON.parse(JSON.stringify(players)) as Record<string, unknown>[];
+        plyrs.forEach(p => p['team'] === 'Manchester United' && (p['ticked'] = true));
 
         // act
         const groupedResults = service.optionsGrouping(plyrs, groupByProperty);
 
         // assert
-        expect(groupedResults[0].ticked).toBeTruthy();
+        expect(groupedResults[0]['ticked']).toBeTruthy();
       }
     ));
     it('should un mark group option when any of descendant is deselected', inject(
       [NgxMultiselectService],
-        (service: NgxMultiselectService) => {
+      (service: NgxMultiselectService) => {
         // arrange
         const plyrs = JSON.parse(JSON.stringify(players))
 
@@ -127,13 +127,13 @@ describe('MultiselectService', () => {
         const groupedResults = service.optionsGrouping(plyrs, groupByProperty);
 
         // assert
-        expect(groupedResults[0].ticked).toBeFalsy();
+        expect(groupedResults[0]['ticked']).toBeFalsy();
       }
     ));
   });
   it('should find unique numbers', inject(
     [NgxMultiselectService],
-      (service: NgxMultiselectService) => {
+    (service: NgxMultiselectService) => {
       // arrange
       const plyrs = JSON.parse(JSON.stringify(players));
 
@@ -146,7 +146,7 @@ describe('MultiselectService', () => {
   ));
   it('should flatten virtual group options', inject(
     [NgxMultiselectService],
-      (service: NgxMultiselectService) => {
+    (service: NgxMultiselectService) => {
       // arrange
       const plyrs = [1, 2, 1, 2, 3]
 
@@ -160,7 +160,7 @@ describe('MultiselectService', () => {
   ));
   it('should disabled group button if all descendant disabled', inject(
     [NgxMultiselectService],
-      (service: NgxMultiselectService) => {
+    (service: NgxMultiselectService) => {
       // arrange
       const plyrs = JSON.parse(JSON.stringify(players))
       plyrs.forEach(p => p.team === 'Manchester United' && (p.disabled = true));
@@ -175,7 +175,7 @@ describe('MultiselectService', () => {
   ));
   it('should flatten virtual group options', inject(
     [NgxMultiselectService],
-      (service: NgxMultiselectService) => {
+    (service: NgxMultiselectService) => {
       // arrange
       const plyrs = [1, 2, 1, 2, 3]
 

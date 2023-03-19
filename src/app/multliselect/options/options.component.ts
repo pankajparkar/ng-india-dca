@@ -18,10 +18,10 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OptionsComponent implements OnInit, OnChanges {
-  _options: any[] = [];
+  _options: Record<string, unknown>[] = [];
 
   @Input() disabled: boolean = false;
-  @Input() set options(value: any) {
+  @Input() set options(value: Record<string, unknown>[]) {
     this._options = value;
   }
   get() {
@@ -32,22 +32,22 @@ export class OptionsComponent implements OnInit, OnChanges {
 
   start: number = 0;
   end: number = 5;
-  filteredOptions!: any[];
+  filteredOptions!: Record<string, unknown>[];
 
   @ViewChild('defaultOptionsTemplate', { static: true }) defaultOptionsTemplate!: TemplateRef<any>;
 
   constructor() { }
 
-  getOptionStyle(option: any) {
-    return { marked: option.ticked, disabled: this.disabled || option.disabled };
+  getOptionStyle(option: Record<string, unknown>) {
+    return { marked: option['ticked'], disabled: this.disabled || option['disabled'] };
   }
 
-  select(option: any) {
+  select(option: Record<string, unknown>) {
     this.selectOption.emit(option);
   }
 
-  updateRange({ start, end }: any) {
-    this.filteredOptions = [...this._options].slice(start, end);
+  updateRange({ start, end }: Record<string, unknown>) {
+    this.filteredOptions = [...this._options].slice(start as number, end as number);
   }
 
   ngOnInit() {
