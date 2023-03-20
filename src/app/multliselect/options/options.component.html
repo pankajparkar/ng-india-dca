@@ -2,7 +2,7 @@
   (rangeChanged)="updateRange($event)">
   <div #top class="top"></div>
   <ng-container *ngIf="filteredOptions.length; else noOptions">
-    <div class="option" [ngClass]="getOptionStyle(option)" *ngFor="let option of filteredOptions"
+    <div class="option" [ngClass]="getOptionStyle(option)" *ngFor="let option of $any(filteredOptions)"
       (click)="select(option)">
       <ng-container *ngTemplateOutlet="
           optionsTemplate;

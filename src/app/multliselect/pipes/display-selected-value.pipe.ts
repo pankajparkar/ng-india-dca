@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { MultiselectOption } from '../models/multiselect-option.model';
 
 const DOTS = ' ...';
 
@@ -8,9 +9,8 @@ const DOTS = ' ...';
 })
 export class DisplaySelectedValuePipe implements PipeTransform {
   defaultMaxLabelCount: number = 3;
-  transform(value: Record<string, unknown>[] | Record<string, unknown>, maxLabelCount: number = this.defaultMaxLabelCount): string {
+  transform(value: MultiselectOption | MultiselectOption[] | null, maxLabelCount: number = this.defaultMaxLabelCount): string {
     if (value instanceof Array) {
-
       const collection = [...value];
       var total = collection.length;
       const condn = collection.length > maxLabelCount;
@@ -18,6 +18,6 @@ export class DisplaySelectedValuePipe implements PipeTransform {
 
       return `${collection.map(v => v['name']).join(', ')}${condn ? DOTS + ' (' + total + ')' : ''}`;
     }
-    return value && value['name'] as string;
+    return value?.name as string;
   }
 }

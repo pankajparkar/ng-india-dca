@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { GroupByMultiselectOption, MultiselectOption } from '../models/multiselect-option.model';
 
 const matchSelectors = [
   'matches',
@@ -49,9 +50,9 @@ export class NgxMultiselectService {
   }
 
   // TODO: make this logic to work to find all descendant groups
-  collectAllDescendants(collection: Record<string, unknown>[], groupProperty: string, groupName: string) {
+  collectAllDescendants(collection: GroupByMultiselectOption[], groupProperty: string, groupName: string) {
     const allDescendants = collection.filter(
-      (item: Record<string, unknown>) => item[groupProperty] as string === groupName
+      (item) => item[groupProperty] as string === groupName
     );
     allDescendants.concat(
       collection.filter((item: Record<string, unknown>) => (item as Record<string, unknown>)['parent'] == groupName)
@@ -59,20 +60,20 @@ export class NgxMultiselectService {
     return allDescendants;
   }
 
-  private allDescendantsAreTicked(collection: Record<string, unknown>[], groupProperty: string, groupName: string) {
+  private allDescendantsAreTicked(collection: GroupByMultiselectOption[], groupProperty: string, groupName: string) {
     const allDescendants = this.collectAllDescendants(collection, groupProperty, groupName);
     const allAreTicked = allDescendants.every(d => d['ticked']);
     return allAreTicked;
   }
-  private allDescendantsAreDisabled(collection: Record<string, unknown>[], groupProperty: string, groupName: string) {
+  private allDescendantsAreDisabled(collection: GroupByMultiselectOption[], groupProperty: string, groupName: string) {
     const allDescendants = this.collectAllDescendants(collection, groupProperty, groupName);
     const allAreDisabled = allDescendants.every(d => d['disabled']);
     return allAreDisabled;
   }
 
-  optionsGrouping(options: Record<string, unknown>[], groupByProperty: string): Record<string, unknown>[] {
+  optionsGrouping(options: GroupByMultiselectOption[], groupByProperty: string): GroupByMultiselectOption[] {
     const getAllUniqueGroupByPropertyValue = this.findUnique(
-      options.map((item: Record<string, unknown>) => item[groupByProperty] as string)
+      options.map((item) => item[groupByProperty] as string)
     );
     const result = getAllUniqueGroupByPropertyValue.map(group => {
       const groupedValues = options.filter(o => o[groupByProperty] === group);
@@ -80,19 +81,20 @@ export class NgxMultiselectService {
         name: group,
         values: groupedValues,
         ticked: groupedValues.every(o => o['ticked']),
-        disabled: groupedValues.every(o => o['disabled'])
+        disabled: groupedValues.every(o => o['disabled']),
+        isGroup: true,
       };
     });
-    return result;
+    return result as GroupByMultiselectOption[];
   }
 
   findUnique(expression: string[]) {
     return [...Array.from(new Set(expression))];
   }
 
-  virtualOptionsGroupingFlatten(options: Record<string, unknown>[], groupByProperty: string): Record<string, unknown>[] {
+  virtualOptionsGroupingFlatten(options: GroupByMultiselectOption[], groupByProperty: string): GroupByMultiselectOption[] {
     const allParentGroupedValues = this.findUnique(
-      options.filter((o) => !(o['parent'] as Record<string, unknown>[]))
+      options.filter((o) => !(o['parent']))
         .map((item) => item[groupByProperty] as unknown as string)
     );
     const subGroupedValues = options.filter(o => o['parent'])
@@ -100,22 +102,22 @@ export class NgxMultiselectService {
         name: item['name'],
         parent: item['parent'],
       }));
-    let result: Record<string, unknown>[] = [];
+    let result: GroupByMultiselectOption[] = [];
     allParentGroupedValues.forEach(group => {
       result.push({
         name: group,
-        isGroup: true,
-        ticked: this.allDescendantsAreTicked(options, groupByProperty, group as unknown as string),
-        disabled: this.allDescendantsAreDisabled(options, groupByProperty, group as unknown as string)
+        isGroup: false,
+        ticked: this.allDescendantsAreTicked(options, groupByProperty, group),
+        disabled: this.allDescendantsAreDisabled(options, groupByProperty, group)
       });
       const groupedValues = options
         .filter((o: any) => o[groupByProperty as string] === group && !o['parent'])
         .map(v => ({ ...v, depth: 1 }));
       result = [...result].concat(groupedValues);
       // TODO: Remove as unknown as string to proper typings
-      const childGroupedValues = subGroupedValues.filter((s: Record<string, unknown>) => s['parent'] as string === group as unknown as string);
+      const childGroupedValues = subGroupedValues.filter((s) => s['parent']! === group);
       childGroupedValues.forEach(c => {
-        result.push({ name: c, parent: group, isGroup: true });
+        result.push({ name: c.name, parent: group, isGroup: true } as unknown as GroupByMultiselectOption);
         const values = options.filter(o => o[groupByProperty] === c).map(v => ({ ...v, depth: 2 }));
         result.concat(values);
       });
@@ -131,15 +133,15 @@ export class NgxMultiselectService {
     return ret;
   }
 
-  mapDatasourceToFields(collection: Record<string, unknown>[], propertyMap: Record<string, unknown>, groupedProperty?: string) {
+  mapDatasourceToFields(collection: MultiselectOption[], propertyMap: Record<string, string>, groupedProperty?: string) {
     let keys = Object.keys(propertyMap);
-    return collection.map((item: Record<string, unknown>) => {
+    return collection.map((item) => {
       let obj = groupedProperty ? { [groupedProperty]: item[groupedProperty] } : {};
-      keys.reduce((a: Record<string, unknown>, b: string) => {
+      keys.reduce((a, b: string) => {
         a[b] = item[propertyMap[b] as string];
         return a;
       }, obj);
       return obj;
-    });
+    }) as MultiselectOption[];
   }
 }

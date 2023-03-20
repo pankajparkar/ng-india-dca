@@ -10,6 +10,7 @@ import {
   SimpleChanges,
   OnChanges
 } from '@angular/core';
+import { GroupByMultiselectOption, MultiselectOption } from '../models/multiselect-option.model';
 
 @Component({
   selector: 'ms-options',
@@ -18,10 +19,10 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OptionsComponent implements OnInit, OnChanges {
-  _options: Record<string, unknown>[] = [];
+  _options: MultiselectOption[] | GroupByMultiselectOption[] = [];
 
   @Input() disabled: boolean = false;
-  @Input() set options(value: Record<string, unknown>[]) {
+  @Input() set options(value: MultiselectOption[] | GroupByMultiselectOption[]) {
     this._options = value;
   }
   get() {
@@ -32,22 +33,22 @@ export class OptionsComponent implements OnInit, OnChanges {
 
   start: number = 0;
   end: number = 5;
-  filteredOptions!: Record<string, unknown>[];
+  filteredOptions!: MultiselectOption[] | GroupByMultiselectOption[];
 
   @ViewChild('defaultOptionsTemplate', { static: true }) defaultOptionsTemplate!: TemplateRef<any>;
 
   constructor() { }
 
-  getOptionStyle(option: Record<string, unknown>) {
-    return { marked: option['ticked'], disabled: this.disabled || option['disabled'] };
+  getOptionStyle(option: MultiselectOption | GroupByMultiselectOption) {
+    return { marked: option.ticked, disabled: this.disabled || option.disabled };
   }
 
-  select(option: Record<string, unknown>) {
+  select(option: MultiselectOption | GroupByMultiselectOption) {
     this.selectOption.emit(option);
   }
 
-  updateRange({ start, end }: Record<string, unknown>) {
-    this.filteredOptions = [...this._options].slice(start as number, end as number);
+  updateRange({ start, end }: Record<string, number>) {
+    this.filteredOptions = [...this._options].slice(start, end) as MultiselectOption[] | GroupByMultiselectOption[];
   }
 
   ngOnInit() {

@@ -16,6 +16,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgxMultiselectService } from './services/multiselect.service';
 import { forwardRef } from '@angular/core';
 import { FilterOptionsComponent } from './filter-options/filter-options.component';
+import { MultiselectOption } from './models/multiselect-option.model';
 
 export const DEFAULT_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
@@ -39,19 +40,19 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   // private variables
   private _multiple!: boolean;
   private _theme: string = 'material';
-  private _optionsCopy!: Record<string, unknown>[];
+  private _optionsCopy!: MultiselectOption[];
   private _isOpen: boolean = false;
-  private operationPendingQueue: Record<string, unknown>[] = [];
+  private operationPendingQueue: MultiselectOption[] = [];
 
   // public variables
-  _selectedOptions: Record<string, unknown> | Record<string, unknown>[] | null = null;
-  _defaultPropertyMap: Record<string, unknown> = {
+  _selectedOptions: MultiselectOption | MultiselectOption[] | null = null;
+  _defaultPropertyMap: Record<string, string> = {
     id: 'id',
     name: 'name',
     disabled: 'disabled'
   };
   _defaultPropertyMapLength = Object.keys(this._defaultPropertyMap).length;
-  _options!: Record<string, unknown>[];
+  _options!: MultiselectOption[];
 
   @HostBinding('class.mat-multiselect') matMultiselect: boolean = true;
   @HostBinding('class.bs-multiselect') bsMultiselect: boolean = false;
@@ -97,7 +98,7 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   get isOpen() {
     return this._isOpen;
   }
-  @Input() set propertyMap(val: Record<string, unknown>) {
+  @Input() set propertyMap(val: Record<string, string>) {
     this._defaultPropertyMap = { ...this._defaultPropertyMap, ...val };
   }
   @Input()
@@ -105,12 +106,12 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
     return this._multiple;
   }
   set multiple(value: boolean) {
-    this.viewToModel(value ? ([] as Record<string, unknown>[]) : null);
+    this.viewToModel(value ? ([]) : null);
     this._multiple = value;
   }
 
   @Input()
-  set options(collection: Record<string, unknown>[]) {
+  set options(collection: MultiselectOption[]) {
     if (!collection) return;
     this._optionsCopy = this.multiselectService.mapDatasourceToFields(
       collection,
@@ -127,8 +128,8 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   // Output bindings
   @Output() onOpen: EventEmitter<void> = new EventEmitter<void>();
   @Output() onClose: EventEmitter<void> = new EventEmitter<void>();
-  @Output() onItemClick: EventEmitter<Record<string, unknown>> = new EventEmitter<Record<string, unknown>>();
-  @Output() onGroupItemClick: EventEmitter<Record<string, unknown>> = new EventEmitter<Record<string, unknown>>();
+  @Output() onItemClick: EventEmitter<MultiselectOption> = new EventEmitter<MultiselectOption>();
+  @Output() onGroupItemClick: EventEmitter<MultiselectOption> = new EventEmitter<MultiselectOption>();
   @Output() onSelectAll: EventEmitter<void> = new EventEmitter<void>();
   @Output() onSelectNone: EventEmitter<void> = new EventEmitter<void>();
   @Output() onReset: EventEmitter<void> = new EventEmitter<void>();
@@ -138,7 +139,7 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   @ViewChild('filterOptions', { read: FilterOptionsComponent }) filterOptions!: FilterOptionsComponent;
 
   // Adding pending operation in queue
-  addOperation(item: Record<string, unknown> | Record<string, unknown>[]) {
+  addOperation(item: MultiselectOption | MultiselectOption[]) {
     if (item instanceof Array) {
       this.operationPendingQueue.push(...item);
     } else {
@@ -169,18 +170,18 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
     return this.operationPendingQueue.length;
   }
 
-  private _initialValue!: Record<string, unknown> | Record<string, unknown>[];
-  set initialValue(value: Record<string, unknown> | Record<string, unknown>[]) {
+  private _initialValue!: MultiselectOption | MultiselectOption[];
+  set initialValue(value: MultiselectOption | MultiselectOption[]) {
     this._initialValue = value;
   }
   get initialValue() {
     return this._initialValue;
   }
 
-  onChange = (_: Record<string, unknown> | Record<string, unknown>[] | null) => { };
+  onChange = (_: MultiselectOption | MultiselectOption[] | null) => { };
   onTouched = () => { };
 
-  writeValue(value: Record<string, unknown> | Record<string, unknown>[]) {
+  writeValue(value: MultiselectOption | MultiselectOption[]) {
     // Set selected value for initial load of value
     if (value) {
       this.initialValue = value;
@@ -188,34 +189,36 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
       this.formatPrepopulatedValues(value);
     }
   }
-  private formatPrepopulatedValues(value: Record<string, unknown> | Record<string, unknown>[]) {
+  private formatPrepopulatedValues(value: MultiselectOption | MultiselectOption[]) {
     let options = value;
     // TODO: can we improve below logic?
     if (Object.keys(this._defaultPropertyMap).length == this._defaultPropertyMapLength) return;
-    const swappedPropertyMap: Record<string, unknown> = this.multiselectService.mirrorObject(this._defaultPropertyMap);
+    const swappedPropertyMap: MultiselectOption = this.multiselectService.mirrorObject(this._defaultPropertyMap) as MultiselectOption;
     if (this.multiple) {
       // Mapping can be done at single place.
-      (options as Record<string, unknown>[]).forEach((o: Record<string, unknown>) => {
-        o['id'] = o[swappedPropertyMap['id'] as string];
-        o['name'] = o[swappedPropertyMap['name'] as string];
+      (options as MultiselectOption[]).forEach((o) => {
+        o.id = o[swappedPropertyMap.id!];
+        o.name = o[swappedPropertyMap.name];
       });
     } else {
-      (value as Record<string, unknown>)['id'] = (value as Record<string, unknown>)[swappedPropertyMap['id'] as string];
-      (value as Record<string, unknown>)['name'] = (value as Record<string, unknown>)[swappedPropertyMap['name'] as string];
-      options = value;
+      if (!(value instanceof Array)) {
+        value.id = value[swappedPropertyMap.id!];
+        value.name = value[swappedPropertyMap.name];
+        options = value;
+      }
     }
   }
 
-  registerOnChange(fn: (value: Record<string, unknown> | Record<string, unknown>[] | null) => void): void {
+  registerOnChange(fn: (value: MultiselectOption | MultiselectOption[] | null) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: () => Record<string, unknown>): void {
+  registerOnTouched(fn: () => MultiselectOption): void {
     this.onTouched = fn;
   }
 
   // All update to options should happen from below method.
-  setOptions(options: Record<string, unknown>[]) {
+  setOptions(options: MultiselectOption[]) {
     this._options = options;
   }
 
@@ -232,7 +235,7 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
     let result = optionsCopy;
     if (val) {
       result = optionsCopy.filter(
-        i => (i['name'] as string)?.toLowerCase().indexOf(val.toLowerCase()) !== -1
+        i => i.name?.toLowerCase().indexOf(val.toLowerCase()) !== -1
       );
     }
     this.setOptions(result);
@@ -254,9 +257,9 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
     this.isOpen = false;
   }
 
-  removeItem(collection: Record<string, unknown>[], item: Record<string, unknown>) {
-    item['ticked'] = false;
-    const index = collection.findIndex((o: Record<string, unknown>) => o['id'] === item['id']);
+  removeItem(collection: MultiselectOption[], item: MultiselectOption) {
+    item.ticked = false;
+    const index = collection.findIndex((o) => o.id === item.id);
     collection.splice(index, 1);
   }
 
@@ -264,47 +267,47 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
     this.isOpen = !this.isOpen;
   }
 
-  prepopulateOptions(selected: Record<string, unknown> | Record<string, unknown>[]) {
+  prepopulateOptions(selected: MultiselectOption | MultiselectOption[]) {
     let selectedIds: string[] = [];
-    selectedIds = this._multiple && selected instanceof Array ?
-      (selected || []).map((i: Record<string, unknown>) => i['id'] as string) :
-      selected ? [selected as Record<string, unknown>['id'] as string] : [];
+    selectedIds = this._multiple ?
+      ((selected || []) as MultiselectOption[]).map((i) => i.id!) :
+      selected ? [(selected as MultiselectOption).id!] : [];
     this.setOptions(
       this.getOptions()
         .map(o => ({
           ...o,
-          ticked: selectedIds.indexOf(o['id'] as string) !== -1
+          ticked: selectedIds.indexOf(o.id!) !== -1
         }))
     );
     // TODO: do we really need this reassignment?
     this.viewToModel(selected);
   }
 
-  select(option: Record<string, unknown>) {
+  select(option: MultiselectOption) {
     let selectedOptions;
-    option['ticked'] = !option['ticked'];
+    option.ticked = !option.ticked;
     // TODO: Refactor below logic
     if (this._multiple) {
       selectedOptions = [...(
         this._selectedOptions instanceof Array ? this._selectedOptions : []
       )];
-      let selectedIds = selectedOptions.map(i => i['id']);
-      if (selectedIds.indexOf(option['id']) === -1) {
+      let selectedIds = selectedOptions.map(i => i.id);
+      if (selectedIds.indexOf(option.id) === -1) {
         // if selected item not exist in collection, push it
         selectedOptions.push(option);
       } else {
         // if selected item exist in collection, post it
         this.removeItem(selectedOptions, option);
       }
-      selectedIds = selectedOptions.map(i => i['id']);
+      selectedIds = selectedOptions.map(i => i.id);
     } else {
       // TODO: find optimized way to do below
-      let val = option && option['id'];
+      let val = option && option.id;
       let changedOptions = this.getOptions()
         .map(
           o => ({
             ...o,
-            ticked: o['id'] == val
+            ticked: o.id == val
           })
         );
       selectedOptions = changedOptions.find(i => i.ticked);
@@ -343,21 +346,21 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   }
 
   //TODO: Optimized below logic, it can be done in lesser steps
-  selectGroup(group: Record<string, unknown>) {
+  selectGroup(group: MultiselectOption) {
     const { ticked, values } = group;
     const options = this.getOptions();
     let selectedValues = this._selectedOptions instanceof Array ? [...this._selectedOptions] : [];
-    let selectedIds = selectedValues.map(s => s['id']);
-    const allGroupOptionIds = (values as Record<string, unknown>[]).map((v: Record<string, unknown>) => v['id']);
+    let selectedIds = selectedValues.map(s => s.id);
+    const allGroupOptionIds = (values as MultiselectOption[]).map((v) => v.id);
     // Get all ticked options
     // concat with selected options
     selectedValues = ticked
-      ? selectedValues.concat(values as Record<string, unknown>[])
-      : selectedValues.filter(o => allGroupOptionIds.indexOf(o['id']) === -1);
+      ? selectedValues.concat(values)
+      : selectedValues.filter(o => allGroupOptionIds.indexOf(o.id) === -1);
     // Find unique out of them
-    selectedIds = this.multiselectService.findUnique(selectedValues.map(item => 'id' in item ? item['id'] as unknown as string : ''));
+    selectedIds = this.multiselectService.findUnique(selectedValues.map(item => item.id!));
     // build selectedOptions array again
-    selectedValues = options.filter(o => selectedIds.indexOf(o['id']) !== -1);
+    selectedValues = options.filter(o => selectedIds.indexOf(o.id) !== -1);
     this.viewToModel(selectedValues);
     this.onGroupItemClick.emit(group);
   }
@@ -369,7 +372,7 @@ export class NgxMultiselectComponent implements ControlValueAccessor {
   }
 
   // Responsible for updating value from view to model
-  viewToModel(selected: Record<string, unknown> | Record<string, unknown>[] | null) {
+  viewToModel(selected: MultiselectOption | MultiselectOption[] | null) {
     if (this._selectedOptions !== selected) {
       this._selectedOptions = selected;
       this.onChange(selected);
