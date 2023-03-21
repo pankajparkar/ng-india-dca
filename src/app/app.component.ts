@@ -12,13 +12,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
   standalone: true,
   template: `
     <app-navbar></app-navbar>
-    <p>Select your favourite teams from the following:</p>
-    <ngx-multiselect
-      [formControl]="selectedOptions"
-      ngDefaultControl
-      [options]="options">
-    </ngx-multiselect>
-    <!-- <router-outlet></router-outlet> -->
+    <router-outlet></router-outlet>
   `,
   imports: [
     SimpleCardComponent,
