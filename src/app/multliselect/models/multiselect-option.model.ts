@@ -1,8 +1,8 @@
 export interface MultiselectOption {
-    id?: string;
+    id?: any;
     name: string;
-    disabled: boolean;
-    ticked: boolean;
+    disabled?: boolean;
+    ticked?: boolean;
     [key: string]: any;
 }
 

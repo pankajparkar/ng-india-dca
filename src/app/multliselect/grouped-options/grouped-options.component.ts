@@ -57,7 +57,7 @@ export class GroupedOptionsComponent implements OnInit, OnChanges {
         : [];
     const values = collection.map(v => ({
       ...v,
-      ticked: !v.isGroup ? selectedIds.indexOf(v['id']) !== -1 : v['ticked']
+      ticked: !v.isGroup ? selectedIds.indexOf(v.id) !== -1 : v.ticked
     }));
     this.groupedOptions = this.multiselectService.virtualOptionsGroupingFlatten(values, this.groupedProperty);
     this.updateRange({ start: this.start, end: this.end });
@@ -67,7 +67,7 @@ export class GroupedOptionsComponent implements OnInit, OnChanges {
     return {
       group: option.isGroup,
       marked: option.ticked,
-      disabled: this.disabled || option['disabled']
+      disabled: this.disabled || option.disabled
     };
   }
 

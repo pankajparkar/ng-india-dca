@@ -16,7 +16,7 @@ export class DisplaySelectedValuePipe implements PipeTransform {
       const condn = collection.length > maxLabelCount;
       condn ? (collection.length = maxLabelCount) : null;
 
-      return `${collection.map(v => v['name']).join(', ')}${condn ? DOTS + ' (' + total + ')' : ''}`;
+      return `${collection.map(v => v.name).join(', ')}${condn ? DOTS + ' (' + total + ')' : ''}`;
     }
     return value?.name as string;
   }
